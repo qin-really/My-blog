@@ -20,9 +20,9 @@ export const profile = {
   brand: 'Fanhua.dev',
   slogan: '笃行致远.',
   sloganComment: '这里是繁花的个人主页',
-  role: '计算机专业 · 前端开发实习生',
+  role: '计算机专业实习生',
   tagline: '认真实习、勤恳学习的计算机专业学生，正在努力把代码写得像样，把每一步踩过的坑都记录下来。',
-  location: '中国 · 上海',
+  location: '中国 · 广西',
   identities: ['计算机专业', '前端开发实习生', 'GitHub 玩家', 'AI 爱好者', '成长中的 全栈工程师'],
   about: [
     '你好，我是一名计算机专业的学生，目前在正在准备实习。业余时间喜欢折腾开源、写技术笔记，也在学习把大模型接进真实产品里。',
@@ -34,9 +34,9 @@ export const profile = {
     { icon: 'icon-CommentOutlined', text: '把实习中的踩坑写成笔记，乐于分享' }
   ],
   stats: [
-    { value: '0+', label: '个月实习' },
-    { value: '2', label: '课程与个人项目' },
-    { value: '0.0k', label: 'GitHub Commits' },
+    { value: '即将进入', label: '实习' },
+    { value: '4', label: '课程与个人项目' },
+    { value: '正在积累', label: 'GitHub Commits' },
 
   ]
 }
@@ -98,7 +98,7 @@ export const projects = [
     name: 'Aether 个人主页',
     desc: '就是本站在这里。Vue3 + Vite，扁平化与毛玻璃的实践，一份构建随处部署。',
     tags: ['Vue 3', 'Vite', '毛玻璃'],
-    repo: 'https://github.com/qin-really',
+    repo: 'https://github.com/qin-really/My-blog',
     demo: null,
     stars: 0
   },
@@ -106,10 +106,27 @@ export const projects = [
     name: '中国象棋在线对战',
     desc: '基于spring-boot+vue开发的在线象棋对战平台',
     tags: ['Spring-Boot', 'WebSocket ', 'AI开发'],
-    repo: 'https://github.com/qin-really',
+    repo: 'https://github.com/qin-really/ChineseChess',
     demo: null,
     stars: 0
   },
+  {
+    name: '音乐播放平台',
+    desc: '基于spring-boot+vue开发的音乐播放平台' +
+        '使用Cloud flare隧道转发，启动时才能访问',
+    tags: ['Spring-Boot', 'WebSocket ', 'AI开发'],
+    repo: 'https://github.com/qin-really/Play-music',
+    demo: 'https://moor.cc.cd/',
+    stars: 0
+  },
+  {
+    name: 'Just Swap',
+    desc: '纯Go语言的局域网文件传输工具',
+    tags: ['GO', 'HTML ', 'AI开发'],
+    repo: 'https://github.com/qin-really/Just-Swap',
+    demo: null,
+    stars: 0
+  }
 
 
 
