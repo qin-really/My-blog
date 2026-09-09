@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <!--
+    背景底图占位（白 + 天空蓝浅色渐变）
+    替换为你的真实背景照片：把任意图片命名为 bg.jpg 放到 public/ 目录，
+    然后在 src/data/site.js 里把 bgImage 改为 './bg.jpg' 即可。
+  -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EAF6FE"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <radialGradient id="c1" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#BEE6FA" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#BEE6FA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="c2" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#A8DCF6" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#A8DCF6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+  <circle cx="300" cy="220" r="280" fill="url(#c1)"/>
+  <circle cx="1320" cy="300" r="340" fill="url(#c2)"/>
+  <circle cx="820" cy="760" r="380" fill="url(#c1)"/>
+  <ellipse cx="980" cy="180" rx="220" ry="70" fill="#FFFFFF" fill-opacity="0.5"/>
+</svg>
