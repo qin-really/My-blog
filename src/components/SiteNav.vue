@@ -46,7 +46,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScrollRaf))
   <header class="nav" role="banner">
     <nav class="nav__bar" :class="{ glassy: scrolled || open }">
       <a class="nav__brand" href="#home" @click.prevent="go('home')">
-        <span class="nav__logo">A</span>
+        <span class="nav__logo">F</span>
         {{ profile.brand }}
       </a>
 
