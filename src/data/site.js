@@ -100,7 +100,7 @@ export const projects = [
     tags: ['Vue 3', 'Vite', '毛玻璃'],
     repo: 'https://github.com/qin-really',
     demo: null,
-    stars: 21
+    stars: 0
   },
   {
     name: '中国象棋在线对战',
@@ -108,7 +108,7 @@ export const projects = [
     tags: ['Spring-Boot', 'WebSocket ', 'AI开发'],
     repo: 'https://github.com/qin-really',
     demo: null,
-    stars: 68
+    stars: 0
   },
 
 
