@@ -2,19 +2,20 @@
 // Cloudflare Pages Functions：把 R2 对象流式输出到 /media/**
 //
 // ⚠ 绑定的环境变量名必须和控制台「项目设置 → Resources」里填的「名称」完全一致。
-// 上次这里写的是 MY_BUCKET，实际绑定叫 video，env.MY_BUCKET 为 undefined，
-// .get() 直接抛 TypeError → 500，表现为视频完全无法访问。
-// 现在 BUCKET_NAMES 里全部列上，谁存在用谁；都不存在就报错并打印 env 实际内容。
+// 历史上这个值被改成过 MY_BUCKET / video / videos / MEDIA，这里全部列上，谁存在用谁；
+// 一个命不中就报错并打印 env 实际内容，不用再靠猜。
 //
-// 路径映射：/media/videos/video1.mp4  →  R2 对象键 videos/video1.mp4
-// 桶里若直接放根目录，也会自动补试不带 videos/ 前缀的键。
+// 路径映射：/media/videos/video1.mp4  →  先试键 videos/video1.mp4
+//                                     →  再试键 video1.mp4（桶根兜底）
+// 与 site.js 的 videoBase（/media/videos）、file（video1.mp4）配合，
+// 无论 R2 里对象在 videos/ 子目录还是桶根目录都能命中。
 //
 // 两个关键点：
 // 1. Range 分片（206 Partial Content）—— 视频能拖动进度条、边下边播
 // 2. 显式补全 Content-Type —— 否则浏览器按 application/octet-stream 处理会直接下载
 // ============================================================
 
-const BUCKET_NAMES = ['video', 'videos', 'MY_BUCKET']
+const BUCKET_NAMES = ['video', 'MEDIA', 'videos', 'MY_BUCKET']
 
 // R2 上传时若未设置 contentType 元数据，会回落到 application/octet-stream，
 // 所以这里以扩展名为准，扩展名识别不出来再用 R2 上存的元数据。
