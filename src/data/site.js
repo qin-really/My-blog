@@ -132,6 +132,34 @@ export const projects = [
 
 ]
 
+// ============================================================
+// 视频：由 functions/media/[[all]].js 从 R2 取文件流式输出
+// 播放地址 = videoBase + '/' + file（空格会编码成 %20）
+// R2 里的对象键 = 去掉 /media 前缀后的路径
+//   例：/media/videos/Timeline 1.mp4  →  videos/Timeline 1.mp4
+// 注意：地址是绝对路径，因为 Pages Functions 固定挂在站点根，
+//       不受 vite.config.js 里 base: './' 的影响。
+// ============================================================
+
+export const videoBase = '/media/videos'
+
+export const videos = [
+  {
+    id: 'timeline-1',
+    // name: 'Timeline 1',
+    file: 'Timeline 1.mp4',
+    desc: '这是一个示例视频，个人拍摄剪辑。',
+
+  },
+  {
+    id: 'timeline-2',
+    // name: 'Timeline 2',
+    file: 'Timeline 2.mp4',
+    desc: '示例视频，个人拍摄剪辑。',
+
+  }
+]
+
 export const goals = [
   {
     phase: '短期',

@@ -1,7 +1,32 @@
 <script setup>
-import { projects } from '../data/site.js'
+import { ref } from 'vue'
+import { projects, videos, videoBase } from '../data/site.js'
 import AppIcon from './AppIcon.vue'
 import GlassCard from './GlassCard.vue'
+
+// 播放地址集中在 data/site.js 配置，空格统一编码成 %20
+function toSrc(file) {
+  return encodeURI(`${videoBase}/${file}`)
+}
+
+// 播放失败的视频 id → true；以及各视频的时长（秒），都按 id 存
+const failed = ref({})
+const durations = ref({})
+
+function markFailed(id) {
+  failed.value[id] = true
+}
+
+function readDuration(e, id) {
+  durations.value[id] = e.target.duration || 0
+}
+
+function fmt(seconds) {
+  if (!seconds || !Number.isFinite(seconds)) return ''
+  const s = Math.round(seconds)
+  const m = Math.floor(s / 60)
+  return `${String(m).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+}
 </script>
 
 <template>
@@ -65,6 +90,48 @@ import GlassCard from './GlassCard.vue'
             </div>
           </article>
         </GlassCard>
+      </div>
+
+      <!-- 视频作品：与项目共用同一容器，排在最后 -->
+      <div v-reveal="160" class="videos-block">
+        <div class="videos-block__head">
+          <AppIcon name="icon-BilibiliOutlined" :size="20" />
+          <span>视频作品</span>
+        </div>
+
+        <div class="videos__grid">
+          <article v-for="v in videos" :key="v.id" class="video-card glass glass--strong">
+            <div class="video-player">
+              <video
+                v-show="!failed[v.id]"
+                class="video-player__el"
+                controls
+                playsinline
+                preload="metadata"
+                :src="toSrc(v.file)"
+                @error="markFailed(v.id)"
+                @loadedmetadata="readDuration($event, v.id)"
+              ></video>
+
+              <div v-if="failed[v.id]" class="video-player__error">
+                <AppIcon name="icon-InfoCircleOutline" :size="22" />
+                <p class="video-player__error-title">视频加载失败</p>
+                <code class="video-player__error-code">{{ toSrc(v.file) }}</code>
+              </div>
+            </div>
+
+            <div class="video-card__meta">
+              <h3 class="video-card__title">{{ v.name }}</h3>
+              <p v-if="v.desc" class="video-card__desc">{{ v.desc }}</p>
+              <div class="video-card__foot">
+                <span v-for="t in v.tags" :key="t" class="pill">{{ t }}</span>
+                <span v-if="durations[v.id]" class="video-card__stat">
+                  <AppIcon name="icon-TimeOutlined" :size="14" />{{ fmt(durations[v.id]) }}
+                </span>
+              </div>
+            </div>
+          </article>
+        </div>
       </div>
     </div>
   </section>

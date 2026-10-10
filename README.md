@@ -11,7 +11,8 @@
 - ✅ **圆角克制**：卡片 8–14px，不做过圆
 - ✅ **背景底图预留**：`public/bg.svg` 为占位渐变，放入真实照片后改一行配置即可（见下）
 - ✅ **响应式**：移动端汉堡菜单 + 全屏毛玻璃抽屉；栅格自动坍缩
-- ✅ 板块：**技能**（分类卡片 + 进度条）、**项目**（GitHub 卡片）、**目标**（分阶段清单）、关于 / 联系 / 页脚
+- ✅ 板块：**技能**（分类卡片）、**项目**（GitHub 卡片 + 末尾的视频作品）、**目标**（分阶段清单）、关于 / 联系 / 页脚
+- ✅ **视频播放**：文件托管 Cloudflare R2，经 Pages Functions 按 Range 分片返回，支持拖动进度条边下边播（见下「视频板块」）
 - ✅ **鼠标互动**（克制版）：柔和光晕跟随光标 + 卡片轻微 3D 倾斜；触屏设备与 `prefers-reduced-motion` 下自动关闭
 - ✅ 滚动入场动画（IntersectionObserver，渐进增强）
 - ✅ 图标来自**阿里巴巴矢量图标库 iconfont.cn**（symbol 模式，已本地化）
@@ -28,7 +29,7 @@ npm run preview    # 本地预览构建产物
 
 ## 身份与文案
 
-所有文字、链接、技能 / 项目 / 目标数据集中在 **`src/data/site.js`**（当前为“计算机实习生 · 陈屿”示例），改这里即可，无需碰组件。
+所有文字、链接、技能 / 项目 / 目标数据集中在 **`src/data/site.js`**，改这里即可，无需碰组件。
 
 ## 替换背景底图
 
@@ -38,6 +39,23 @@ npm run preview    # 本地预览构建产物
 2. 在 `src/data/site.js` 顶部把 `bgImage` 改为 `'./bg.jpg'`。
 
 > 底图只做 `background-size: cover` 铺底，不遮挡内容；毛玻璃会自然“糊”出底图的颜色。
+
+## 视频板块（Cloudflare Pages + R2）
+
+视频文件放在 Cloudflare R2，由 `functions/media/[[all]].js` 作为 CDN 流式输出到 `/media/**`。
+
+- **地址映射**：`/media/videos/Timeline%201.mp4` → R2 对象键 `videos/Timeline 1.mp4`（空格要编码成 `%20`）
+- **播放列表**：全部在 `src/data/site.js` 的 `videoBase` / `videos` 里配，改这里即可，不用碰组件
+- **为什么用 Range**：函数返回 206 Partial Content，视频才能拖动进度条、边下边播；否则要等整个文件下完
+- **Content-Type**：函数按扩展名补 `video/mp4`。R2 上传时如果不带 `Content-Type`，浏览器会按 `application/octet-stream` 处理并直接下载
+- **前置条件**：必须部署到 **Cloudflare Pages**，并在 Pages 设置里绑定一个名字为 `MY_BUCKET` 的 R2 bucket。
+  绑到别的名字（比如自己的 bucket 名）记得同步改函数里的 `env.MY_BUCKET`
+- **本地验证**：`npm run dev` 是纯 Vite，不处理 `functions/`，视频地址会 404。
+  要看效果请用 `npx wrangler pages dev dist`（需自行安装 wrangler 并配置 R2 绑定），或直接部署到 preview 环境
+- **访问边界**：该函数无鉴权，`/media/` 下所有对象都能被任何人按 URL 直接访问，不要放私有内容
+- **计费**：R2 有免费流量额度，大视频反复播放要看一下用量
+
+> 加了 `functions/` 之后，站点不再是纯静态了，下面的托管方案只对「不带视频」的构建成立。
 
 ## 部署（静态托管）
 
@@ -52,6 +70,8 @@ npm run preview    # 本地预览构建产物
 
 ```
 ├─ index.html                    # 入口；加载本地 iconfont.js
+├─ functions/
+│  └─ media/[[all]].js           # Pages Functions：/media/** 从 R2 流式输出（Range 分片）
 ├─ public/
 │  ├─ iconfont.js                # 阿里 iconfont symbol 图标雪碧图（本地化）
 │  └─ bg.svg                     # 背景底图占位（可替换成真实照片 bg.jpg）
@@ -59,13 +79,13 @@ npm run preview    # 本地预览构建产物
    ├─ main.js                    # 应用入口 + v-reveal 滚动动画指令
    ├─ App.vue                    # 页面骨架（背景底图 / 光斑 / 鼠标光晕 / 各板块）
    ├─ style.css                  # 全局样式：天空蓝变量 / 毛玻璃 / 响应式
-   ├─ data/site.js               # ★ 全部站点内容
+   ├─ data/site.js               # ★ 全部站点内容（含视频列表）
    └─ components/
       ├─ SiteNav.vue             # 顶部导航（滚动吸顶 + 移动抽屉）
       ├─ HeroSection.vue         # 首屏：大标题 + 代码注释 + 统计
       ├─ AboutSection.vue        # 关于：身份标签 + 简介
       ├─ SkillsSection.vue       # 技能
-      ├─ ProjectsSection.vue     # 项目
+      ├─ ProjectsSection.vue     # 项目（末尾含视频作品）
       ├─ GoalsSection.vue        # 目标
       ├─ ContactSection.vue      # 联系（点击复制 / 跳转）
       ├─ SiteFooter.vue          # 页脚：导航 / 友情链接 / 版权

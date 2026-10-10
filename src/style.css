@@ -821,6 +821,133 @@ section[id] {
   color: var(--c-primary-soft);
 }
 
+/* ---------------- 视频（与项目同一容器，排在最后） ---------------- */
+
+.videos-block {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--c-line);
+}
+
+.videos-block__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--c-ink);
+}
+.videos-block__head .icon {
+  width: 20px;
+  height: 20px;
+  color: var(--c-primary);
+}
+
+.videos__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.video-card {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.video-player {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #04202f;
+  border: 1px solid var(--c-line);
+}
+
+.video-player__el {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.video-player__error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+}
+
+.video-player__error > .icon {
+  width: 24px;
+  height: 24px;
+  color: var(--c-primary-soft);
+}
+
+.video-player__error-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.video-player__error-code {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  overflow-wrap: anywhere;
+}
+
+.video-card__meta {
+  padding: 0 4px;
+}
+
+.video-card__title {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--c-ink);
+}
+
+.video-card__desc {
+  margin: 0 0 12px;
+  font-size: 13.5px;
+  color: var(--c-muted);
+}
+
+.video-card__foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(47, 168, 224, 0.2);
+}
+
+.video-card__stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--c-muted);
+}
+.video-card__stat .icon {
+  width: 14px;
+  height: 14px;
+  color: var(--c-primary-soft);
+}
+
 /* ---------------- 目标 ---------------- */
 
 .goals__list {
@@ -1120,6 +1247,9 @@ section[id] {
   }
 
   .projects__grid {
+    grid-template-columns: 1fr;
+  }
+  .videos__grid {
     grid-template-columns: 1fr;
   }
   .contact__grid {
