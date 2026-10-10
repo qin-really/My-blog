@@ -9,6 +9,11 @@ function toSrc(file) {
   return encodeURI(`${videoBase}/${file}`)
 }
 
+// 没配 name 时用文件名（去掉扩展名）作展示名，避免出现空标题
+function videoTitle(v) {
+  return v.name || (v.file || '').replace(/\.[^.]+$/, '')
+}
+
 // 播放失败的视频 id → true；以及各视频的时长（秒），都按 id 存
 const failed = ref({})
 const durations = ref({})
@@ -121,10 +126,10 @@ function fmt(seconds) {
             </div>
 
             <div class="video-card__meta">
-              <h3 class="video-card__title">{{ v.name }}</h3>
+              <h3 class="video-card__title">{{ videoTitle(v) }}</h3>
               <p v-if="v.desc" class="video-card__desc">{{ v.desc }}</p>
-              <div class="video-card__foot">
-                <span v-for="t in v.tags" :key="t" class="pill">{{ t }}</span>
+              <div v-if="v.tags && v.tags.length || durations[v.id]" class="video-card__foot">
+                <span v-for="t in v.tags || []" :key="t" class="pill">{{ t }}</span>
                 <span v-if="durations[v.id]" class="video-card__stat">
                   <AppIcon name="icon-TimeOutlined" :size="14" />{{ fmt(durations[v.id]) }}
                 </span>

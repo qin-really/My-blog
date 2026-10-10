@@ -147,14 +147,14 @@ export const videos = [
   {
     id: 'timeline-1',
     // name: 'Timeline 1',
-    file: 'Timeline 1.mp4',
+    file: 'video1.mp4',
     desc: '这是一个示例视频，个人拍摄剪辑。',
 
   },
   {
     id: 'timeline-2',
     // name: 'Timeline 2',
-    file: 'Timeline 2.mp4',
+    file: 'video2.mp4',
     desc: '示例视频，个人拍摄剪辑。',
 
   }
