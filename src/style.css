@@ -832,7 +832,8 @@ section[id] {
 .videos-block__head {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 8px 14px;
   margin-bottom: 20px;
   font-size: 17px;
   font-weight: 700;
@@ -842,6 +843,21 @@ section[id] {
   width: 20px;
   height: 20px;
   color: var(--c-primary);
+}
+
+/* 海外服务器延迟提示 */
+.videos-block__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--c-primary-soft);
+}
+.videos-block__hint .icon {
+  width: 15px;
+  height: 15px;
+  color: var(--c-primary-soft);
 }
 
 .videos__grid {
@@ -874,9 +890,19 @@ section[id] {
   background: #000;
 }
 
+/* 加载失败兜底（原生 video 出错时显示） */
+.video-player__error-text {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 360px;
+}
+
 .video-player__error {
   position: absolute;
   inset: 0;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -884,6 +910,7 @@ section[id] {
   gap: 10px;
   padding: 24px;
   text-align: center;
+  background: rgba(4, 20, 32, 0.92);
 }
 
 .video-player__error > .icon {

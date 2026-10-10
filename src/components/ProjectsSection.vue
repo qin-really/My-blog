@@ -102,6 +102,9 @@ function fmt(seconds) {
         <div class="videos-block__head">
           <AppIcon name="icon-BilibiliOutlined" :size="20" />
           <span>视频作品</span>
+          <span class="videos-block__hint">
+            <AppIcon name="icon-CloudOutlined" :size="15" />服务器位于海外，视频加载缓慢，请耐心等待
+          </span>
         </div>
 
         <div class="videos__grid">
@@ -121,6 +124,7 @@ function fmt(seconds) {
               <div v-if="failed[v.id]" class="video-player__error">
                 <AppIcon name="icon-InfoCircleOutline" :size="22" />
                 <p class="video-player__error-title">视频加载失败</p>
+                <p class="video-player__error-text">服务器位于海外，可能是网络暂时无法连接该资源。</p>
                 <code class="video-player__error-code">{{ toSrc(v.file) }}</code>
               </div>
             </div>

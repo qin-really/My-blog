@@ -12,7 +12,7 @@
 - ✅ **背景底图预留**：`public/bg.svg` 为占位渐变，放入真实照片后改一行配置即可（见下）
 - ✅ **响应式**：移动端汉堡菜单 + 全屏毛玻璃抽屉；栅格自动坍缩
 - ✅ 板块：**技能**（分类卡片）、**项目**（GitHub 卡片 + 末尾的视频作品）、**目标**（分阶段清单）、关于 / 联系 / 页脚
-- ✅ **视频播放**：文件托管 Cloudflare R2，经 Pages Functions 按 Range 分片返回，支持拖动进度条边下边播（见下「视频板块」）
+- ✅ **视频播放**：文件托管 Cloudflare R2，经 Pages Functions 按 Range 分片返回，拖动进度条边下边播；默认封面点击才加载，海外延迟有明确提示（见下「视频板块」）
 - ✅ **鼠标互动**（克制版）：柔和光晕跟随光标 + 卡片轻微 3D 倾斜；触屏设备与 `prefers-reduced-motion` 下自动关闭
 - ✅ 滚动入场动画（IntersectionObserver，渐进增强）
 - ✅ 图标来自**阿里巴巴矢量图标库 iconfont.cn**（symbol 模式，已本地化）
@@ -42,24 +42,26 @@ npm run preview    # 本地预览构建产物
 
 ## 视频板块（Cloudflare Pages + R2）
 
-视频文件放在 Cloudflare R2，由 `functions/media/[[all]].js` 作为 CDN 流式输出到 `/media/**`。
+视频文件托管在 **Cloudflare R2**，由 `functions/media/[[all]].js` 作为 **Pages Function** 流式输出到 `/media/**`。
 
-- **地址映射**：`/media/videos/Timeline%201.mp4` → R2 对象键 `videos/Timeline 1.mp4`（空格要编码成 `%20`）
-- **播放列表**：全部在 `src/data/site.js` 的 `videoBase` / `videos` 里配，改这里即可，不用碰组件
-- **为什么用 Range**：函数返回 206 Partial Content，视频才能拖动进度条、边下边播；否则要等整个文件下完
-- **Content-Type**：函数按扩展名补 `video/mp4`。R2 上传时如果不带 `Content-Type`，浏览器会按 `application/octet-stream` 处理并直接下载
-- **前置条件**：必须部署到 **Cloudflare Pages**，并在 Pages 设置里绑定一个名字为 `MY_BUCKET` 的 R2 bucket。
-  绑到别的名字（比如自己的 bucket 名）记得同步改函数里的 `env.MY_BUCKET`
-- **本地验证**：`npm run dev` 是纯 Vite，不处理 `functions/`，视频地址会 404。
-  要看效果请用 `npx wrangler pages dev dist`（需自行安装 wrangler 并配置 R2 绑定），或直接部署到 preview 环境
-- **访问边界**：该函数无鉴权，`/media/` 下所有对象都能被任何人按 URL 直接访问，不要放私有内容
-- **计费**：R2 有免费流量额度，大视频反复播放要看一下用量
+- **地址映射**：页面请求 `/media/videos/video1.mp4` → 函数先试 R2 键 `videos/video1.mp4`，不存在则自动回退试桶根 `video1.mp4`（两种放法都能命中，见下「文件放哪里」）
+- **播放列表**：全部在 `src/data/site.js` 的 `videoBase` / `videos` 里配（`file` 写 R2 里的文件名即可），改这里不用碰组件
+- **原生 `<video>` 直出**：直接用浏览器自带播放器控件（`controls playsinline`），封面、缓冲、进度均交给浏览器原生处理
+- **省流**：`preload="metadata"`，页面打开只取头部元数据（时长等），点播放才真正传流
+- **海外延迟提示**：板块标题旁固定提示「服务器位于海外，视频加载缓慢，请耐心等待」；视频真加载失败时卡片内显示错误块（附实际请求地址，方便排查）
+- **为什么用 Range**：函数返回 206 Partial Content + `Accept-Ranges`，视频才能拖动进度条、边下边播；否则要等整个文件下完
+- **Content-Type**：函数优先按扩展名补 `video/mp4`，识别不出再用 R2 元数据。R2 上传时不带 `Content-Type` 的会用 `application/octet-stream`，浏览器会直接下载而不是内联播放
+- **绑定的 R2 bucket**：函数兼容四个变量名 `video` / `MEDIA` / `videos` / `MY_BUCKET`，**谁存在用谁**；一个都不存在会返回 500 并**打印 env 实际可用的键**。Pages 控制台现在绑的是 `video`
+- **文件放哪里**：`site.js` 里写了 `videoBase = '/media/videos'`，所以文件放**桶的 `videos/` 文件夹**或**桶根**都行，函数会自动兜底
+- **本地验证**：`npm run dev` 是纯 Vite，**不处理 `functions/`**，视频地址会 404。要看效果用 `npx wrangler pages dev dist --remote`（绑定在线上配置已生效）或直接部署后看线上
+- **访问边界**：该函数无鉴权，`/media/` 下所有对象可按 URL 直链访问，**不要放私有内容**；R2 有免费流量额度，大视频反复播放注意用量
+- **如果线上能打开视频但页面里报「视频加载失败」**：优先怀疑浏览器扩展 / DevTools「请求阻止」在拦截页面请求（无痕模式下验证），与本站代码无关
 
-> 加了 `functions/` 之后，站点不再是纯静态了，下面的托管方案只对「不带视频」的构建成立。
+> 加了 `functions/` 之后，站点不再是纯静态了：**视频功能只在 Cloudflare Pages 上工作**（需要 Pages 运行时 + R2 绑定）。下面的托管方案只对「不带视频」的构建成立。
 
 ## 部署（静态托管）
 
-示例均为 `dist/` 上传或一键构建：
+示例均为 `dist/` 上传或一键构建（不带视频功能）：
 
 - **GitHub Pages**：Settings → Pages → Deploy from branch `gh-pages`；或直接推送 `dist/`。
 - **Netlify / Vercel**：Build command `npm run build`，Output directory `dist`。
@@ -71,7 +73,7 @@ npm run preview    # 本地预览构建产物
 ```
 ├─ index.html                    # 入口；加载本地 iconfont.js
 ├─ functions/
-│  └─ media/[[all]].js           # Pages Functions：/media/** 从 R2 流式输出（Range 分片）
+│  └─ media/[[all]].js           # Pages Functions：/media/** 从 R2 流式输出（绑定名兼容 + Range 分片 + 前缀兜底）
 ├─ public/
 │  ├─ iconfont.js                # 阿里 iconfont symbol 图标雪碧图（本地化）
 │  └─ bg.svg                     # 背景底图占位（可替换成真实照片 bg.jpg）
